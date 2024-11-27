@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cursor Follower with Multiple Shadows</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .shadow {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black */
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    #circle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: rgb(112, 36, 89);
+      border: 1px solid black;
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div id="circle"></div>
+  <script>
+    const circle = document.getElementById('circle');
+    const shadows = [];
+    const shadowCount = 10; // Number of shadows in the trail
+
+    // Create shadow elements
+    for (let i = 0; i < shadowCount; i++) {
+      const shadow = document.createElement('div');
+      shadow.classList.add('shadow');
+      document.body.appendChild(shadow);
+      shadows.push(shadow);
+    }
+
+    // Track cursor position
+    let cursorX = 0, cursorY = 0;
+    let positions = Array(shadowCount).fill({ x: 0, y: 0 });
+
+    document.addEventListener('mousemove', (event) => {
+      cursorX = event.clientX;
+      cursorY = event.clientY;
+
+      // Update the main circle position instantly
+      circle.style.left = `${cursorX}px`;
+      circle.style.top = `${cursorY}px`;
+    });
+
+    function animateShadows() {
+      // Update shadow positions
+      positions = [{ x: cursorX, y: cursorY }, ...positions.slice(0, shadowCount - 1)];
+
+      shadows.forEach((shadow, index) => {
+        shadow.style.left = `${positions[index].x}px`;
+        shadow.style.top = `${positions[index].y}px`;
+      });
+
+      requestAnimationFrame(animateShadows);
+    }
+
+    // Start animation loop
+    animateShadows();
+  </script>
+</body>
+</html>
